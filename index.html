@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Vacaciones</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/locales/es.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            position: relative;
+            min-height: 100vh;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        button {
+            background: #5cb85c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+            margin: 0 5px;
+        }
+        button:hover {
+            background: #4cae4c;
+        }
+        .boton-limpiar {
+            background: #d9534f;
+        }
+        .boton-limpiar:hover {
+            background: #c9302c;
+        }
+        .boton-actualizar {
+            background-color: #FFA500;
+        }
+        .boton-actualizar:hover {
+            background-color: #FF8C00;
+        }
+        .calendario-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .calendario {
+            flex: 1;
+            margin: 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #fff;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+        }
+        .vacaciones-list {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .vacacion-card {
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            flex: 1 1 calc(30% - 10px);
+            min-width: 200px;
+            position: relative;
+            padding-right: 40px;
+        }
+        .color-indicator {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+        .vacacion-text {
+            padding-left: 25px;
+        }
+        .eliminar-btn {
+            background: #d9534f;
+            border: none;
+            color: white;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            padding: 5px 8px;
+        }
+        .confirmar-btn {
+            background: #007BFF;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+        }
+        .confirmar-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Registro de Vacaciones</h1>
+    <form id="vacaciones-form">
+        <label for="nombre">Nombre:</label>
+        <select id="nombre" required>
+            <option value="">Selecciona un usuario</option>
+            <option value="Agustin Muñoz">Agustin Muñoz</option>
+            <option value="Andres Chomicki">Andres Chomicki</option>
+            <option value="Diego Basile">Diego Basile</option>
+            <option value="Gabriel Zuñiga">Gabriel Zuñiga</option>
+            <option value="Luis Diby">Luis Diby</option>
+            <option value="Marcelo Muñoz">Marcelo Muñoz</option>
+            <option value="Marcelo Piriz">Marcelo Piriz</option>
+            <option value="Marina Pujana">Marina Pujana</option>
+            <option value="Matias Gabis">Matias Gabis</option>
+            <option value="Nestor Baudens">Nestor Baudens</option>
+            <option value="Sergio Medel">Sergio Medel</option>
+        </select>
+
+        <label for="fecha-inicio">Fecha de Inicio:</label>
+        <input type="text" id="fecha-inicio" class="flatpickr" required>
+
+        <label for="fecha-fin">Fecha de Fin:</label>
+        <input type="text" id="fecha-fin" class="flatpickr" required>
+
+        <div class="button-container">
+            <button type="submit">Registrar Vacaciones</button>
+            <button type="button" class="boton-actualizar" id="actualizar-pagina">Actualizar</button>
+            <button type="button" class="boton-limpiar" id="limpiar-registros">Limpiar Registros</button>
+        </div>
+    </form>
+
+    <div class="calendario-container">
+        <div class="calendario" id="calendario-actual"></div>
+        <div class="calendario" id="calendario-siguiente"></div>
+        <div class="calendario" id="calendario-dos-siguientes"></div>
+    </div>
+
+    <div class="vacaciones-list" id="vacaciones-list">
+        <h3>Vacaciones Registradas:</h3>
+        <div id="vacaciones-registradas"></div>
+    </div>
+
+    <button class="confirmar-btn" id="confirmar-registros">Confirmar</button>
+
+    <script>
+        const colores = {
+            "Agustin Muñoz": "#FF5733",
+            "Andres Chomicki": "#007BFF",
+            "Diego Basile": "#3357FF",
+            "Gabriel Zuñiga": "#F1C40F",
+            "Luis Diby": "#8E44AD",
+            "Marcelo Muñoz": "#E74C3C",
+            "Marcelo Piriz": "#3498DB",
+            "Marina Pujana": "#9B59B6",
+            "Matias Gabis": "#2ECC71",
+            "Nestor Baudens": "#F39C12",
+            "Sergio Medel": "#1ABC9C"
+        };
+
+        let vacacionesRegistradas = [];
+
+        function agregarVacacionAlCalendario(vacacion) {
+            const fechaInicio = new Date(vacacion.fechaInicio);
+            const fechaFin = new Date(vacacion.fechaFin);
+            [calendarioActual, calendarioSiguiente, calendarioDosSiguientes].forEach(cal => {
+                cal.addEvent({
+                    title: vacacion.nombre,
+                    start: vacacion.fechaInicio,
+                    end: new Date(fechaFin.setDate(fechaFin.getDate() + 1)),
+                    color: vacacion.color
+                });
+            });
+        }
+
+        function actualizarCalendarios() {
+            [calendarioActual, calendarioSiguiente, calendarioDosSiguientes].forEach(cal => {
+                cal.removeAllEvents();
+            });
+            vacacionesRegistradas.forEach(vacacion => {
+                agregarVacacionAlCalendario(vacacion);
+            });
+        }
+
+        flatpickr("#fecha-inicio", {
+            dateFormat: "d-m-Y",
+            locale: {
+                firstDayOfWeek: 1,
+                weekdays: {
+                    shorthand: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+                    longhand: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+                },
+                months: {
+                    shorthand: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+                    longhand: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+                }
+            }
+        });
+
+        flatpickr("#fecha-fin", {
+            dateFormat: "d-m-Y",
+            locale: {
+                firstDayOfWeek: 1,
+                weekdays: {
+                    shorthand: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+                    longhand: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+                },
+                months: {
+                    shorthand: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+                    longhand: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+                }
+            }
+        });
+
+        function inicializarCalendario(elementId, monthOffset) {
+            const calendarioEl = document.getElementById(elementId);
+            const fecha = new Date();
+            fecha.setMonth(fecha.getMonth() + monthOffset);
+
+            const calendario = new FullCalendar.Calendar(calendarioEl, {
+                initialDate: fecha,
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'title',
+                    center: '',
+                    right: ''
+                },
+                locale: 'es',
+                events: []
+            });
+
+            calendario.render();
+            return calendario;
+        }
+
+        const calendarioActual = inicializarCalendario('calendario-actual', 0);
+        const calendarioSiguiente = inicializarCalendario('calendario-siguiente', 1);
+        const calendarioDosSiguientes = inicializarCalendario('calendario-dos-siguientes', 2);
+
+        document.getElementById('vacaciones-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nombre = document.getElementById('nombre').value;
+            const fechaInicio = document.getElementById('fecha-inicio').value.split('-').reverse().join('-');
+            const fechaFin = document.getElementById('fecha-fin').value.split('-').reverse().join('-');
+
+            const color = colores[nombre];
+
+            vacacionesRegistradas.push({ nombre, fechaInicio, fechaFin, color });
+            actualizarCalendarios();
+            actualizarListaVacaciones();
+
+            this.reset();
+        });
+
+        function actualizarListaVacaciones() {
+            const listaVacaciones = document.getElementById('vacaciones-registradas');
+            listaVacaciones.innerHTML = ''; // Limpiar lista existente
+            vacacionesRegistradas.forEach((vacacion, index) => {
+                const fechaInicioFormateada = vacacion.fechaInicio.split('-').reverse().join('/');
+                const fechaFinFormateada = vacacion.fechaFin.split('-').reverse().join('/');
+
+                const card = document.createElement('div');
+                card.classList.add('vacacion-card');
+                card.style.borderLeft = `5px solid ${vacacion.color}`;
+                card.innerHTML = `<span class="color-indicator" style="background-color: ${vacacion.color};"></span>
+                                  <span class="vacacion-text">${vacacion.nombre}: Desde ${fechaInicioFormateada} hasta ${fechaFinFormateada}</span>
+                                  <button class="eliminar-btn" data-index="${index}">X</button>`;
+                listaVacaciones.appendChild(card);
+            });
+
+            // Asignar evento a cada botón de eliminar
+            document.querySelectorAll('.eliminar-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    vacacionesRegistradas.splice(index, 1);
+                    actualizarCalendarios();
+                    actualizarListaVacaciones();
+                });
+            });
+        }
+
+        document.getElementById('limpiar-registros').addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que deseas eliminar todos los registros de vacaciones?')) {
+                vacacionesRegistradas = [];
+                [calendarioActual, calendarioSiguiente, calendarioDosSiguientes].forEach(cal => {
+                    cal.removeAllEvents();
+                });
+                actualizarListaVacaciones();
+            }
+        });
+
+        document.getElementById('confirmar-registros').addEventListener('click', function() {
+            if (vacacionesRegistradas.length > 0) {
+                const nombres = vacacionesRegistradas.map(v => v.nombre).join(', ');
+                alert(`VACACIONES GUARDADAS: ${nombres.toUpperCase()}`);
+            } else {
+                alert('No hay vacaciones registradas para confirmar.');
+            }
+        });
+
+        document.getElementById('actualizar-pagina').addEventListener('click', function() {
+            location.reload();
+        });
+    </script>
+</body>
+</html>
